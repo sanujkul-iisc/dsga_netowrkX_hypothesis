@@ -1,5 +1,6 @@
 
 # Property-Based Testing for NetworkX - Project Plan
+
 **Team Size:** 1  
 **Course:** E0 251o  
 **Subject:** Data Structures and Graph Analytics  
@@ -32,55 +33,31 @@ pytest test_networkx_properties.py -v -s
 
 ---
 
-## Algorithm Selection
+# Algorithm Selection
 
-### Selected Algorithms 
+## Selected Algorithms 
 
-#### 1. Minimum Spanning Tree (MST)
-**NetworkX Function:** `nx.minimum_spanning_tree()`
-
-**Why Selected:**
-- Well-defined mathematical properties from graph theory
-- Multiple testable invariants and postconditions
-- Supports both weighted and unweighted graphs
-- Rich opportunities for metamorphic testing
-- Classic algorithm with clear correctness criteria
-
+### 1. Minimum Spanning Tree (MST)
+**NetworkX Function:** `nx.minimum_spanning_tree()`  
 **Number of Tests:** 2
 
 ---
 
-#### 2. Betweenness Centrality
+### 2. Betweenness Centrality
 **NetworkX Function:** `nx.betweenness_centrality()`
-
-**Why Selected:**
-- Important centrality measure (node importance based on shortest paths)
-- Clear bounded properties (normalized values in [0,1])
-- Excellent for metamorphic property testing
-- Can detect subtle algorithmic bugs
-- Complex algorithm with non-trivial properties
-
 **Number of Tests:** 2
 
 ---
 
-#### 3. Maximum Matching
+### 3. Maximum Matching
 **NetworkX Function:** `nx.max_weight_matching()`
-
-**Why Selected:**
-- Clear verification properties (maximality, matching definition)
-- Different from node-based algorithms (edge-based)
-- Demonstrates understanding of combinatorial optimization
-- Good for postcondition testing
-- Complements the other algorithm categories
-
 **Number of Tests:** 1
 
 ---
 
-## Test Specifications
+# Test Specifications
 
-### Test 1: MST Edge Count Property (Postcondition)
+## Test 1: MST Edge Count Property (Postcondition)
 
 **Property Statement:**
 For any connected graph G with n nodes, any minimum spanning tree T has exactly n-1 edges.
@@ -93,17 +70,17 @@ For any connected graph G with n nodes, any minimum spanning tree T has exactly 
 - This is a necessary condition for MST correctness
 
 **Test Strategy:**
-- Generate random connected graphs (3-50 nodes)
-- Vary graph properties:
+- Generating a random connected graphs (3-50 nodes)
+- Varying following graph properties:
   - Size: small (3-10 nodes) to medium (20-50 nodes)
   - Density: sparse to dense
   - Weighted and unweighted variants
-- Compute MST using NetworkX
-- Verify: `len(MST.edges()) == len(G.nodes()) - 1`
+- Computing MST using NetworkX
+- Verifying if: `len(MST.edges()) == len(G.nodes()) - 1`
 
 **Graph Generation Strategy:**
-- Use custom `connected_graphs()` Hypothesis strategy
-- Build spanning tree first (guarantees connectivity)
+- Using custom `connected_graphs()` Hypothesis strategy
+- Building spanning tree first (guarantees connectivity)
 - Add random additional edges for variety
 
 **Failure Significance:**
@@ -117,7 +94,7 @@ For any connected graph G with n nodes, any minimum spanning tree T has exactly 
 
 ---
 
-### Test 2: MST Weight Minimality (Invariant)
+## Test 2: MST Weight Minimality (Invariant)
 
 **Property Statement:**
 The total weight of an MST is less than or equal to the total weight of any other spanning tree of the same graph.
@@ -129,13 +106,13 @@ The total weight of an MST is less than or equal to the total weight of any othe
 - Greedy algorithms (Kruskal's, Prim's) maintain this property through optimal substructure
 
 **Test Strategy:**
-- Generate random weighted connected graphs
+- Generating random weighted connected graphs
 - Edge weights: positive floats (0.1 to 100.0)
-- Compute MST using NetworkX
-- Generate alternative spanning trees by:
+- Computing MST using NetworkX
+- Generating alternative spanning trees by:
   - Random DFS/BFS traversal selecting n-1 edges
   - Repeat multiple times (5-10 alternatives per graph)
-- Verify: `sum(MST edge weights) ≤ sum(alternative tree weights)` for all alternatives
+- Verifying if: `sum(MST edge weights) ≤ sum(alternative tree weights)` for all alternatives
 
 **Graph Generation Strategy:**
 - Use custom `weighted_connected_graphs()` strategy
@@ -154,7 +131,7 @@ The total weight of an MST is less than or equal to the total weight of any othe
 
 ---
 
-### Test 3: Betweenness Centrality Bounds (Invariant)
+## Test 3: Betweenness Centrality Bounds (Invariant)
 
 **Property Statement:**
 For normalized betweenness centrality computation, all values must lie in the interval [0, 1].
@@ -169,14 +146,14 @@ For normalized betweenness centrality computation, all values must lie in the in
 - No node can have negative betweenness or >100% of paths
 
 **Test Strategy:**
-- Generate diverse graphs:
+- Generating diverse graphs:
   - Directed and undirected
   - Connected and disconnected
   - Various sizes (3-30 nodes)
   - Various densities
-- Compute normalized betweenness centrality
-- Verify: `0 ≤ centrality[v] ≤ 1` for all nodes v
-- Use floating-point tolerance (≈1e-9) for boundary cases
+- Computing normalized betweenness centrality
+- Verifying if: `0 ≤ centrality[v] ≤ 1` for all nodes v
+- Using floating-point tolerance (≈1e-9) for boundary cases
 
 **Graph Generation Strategy:**
 - Use both `connected_graphs()` and general graphs
@@ -195,7 +172,7 @@ For normalized betweenness centrality computation, all values must lie in the in
 
 ---
 
-### Test 4: Betweenness Centrality Leaf Nodes Zero (Invariant)
+## Test 4: Betweenness Centrality Leaf Nodes Zero (Invariant)
 
 **Property Statement:**
 Any node with degree 1 (leaf node) must have betweenness centrality exactly zero. Leaf nodes cannot lie on shortest paths between other node pairs.
@@ -211,13 +188,13 @@ Any node with degree 1 (leaf node) must have betweenness centrality exactly zero
 - This holds regardless of connectivity, weights, or normalization
 
 **Test Strategy:**
-- Generate diverse graphs using `arbitrary_graphs(min_nodes=3, max_nodes=30)`
+- Generating diverse graphs using `arbitrary_graphs(min_nodes=3, max_nodes=30)`
 - Both connected and disconnected graphs allowed
 - Various topologies (paths, stars, trees, cycles, random)
 - For each graph G:
-  - Compute normalized betweenness centrality
-  - Identify all leaf nodes (degree = 1)
-  - Verify: centrality[leaf] < 1e-9 for each leaf
+  - Computing normalized betweenness centrality
+  - Identifying all leaf nodes (degree = 1)
+  - Verifying if: centrality[leaf] < 1e-9 for each leaf
 - Run 100 random test cases
 
 **Graph Generation Strategy:**
@@ -238,7 +215,7 @@ Any node with degree 1 (leaf node) must have betweenness centrality exactly zero
 
 ---
 
-### Test 5: Maximum Matching Maximality (Postcondition)
+## Test 5: Maximum Matching Maximality (Postcondition)
 
 **Property Statement:**
 A maximum matching M in graph G has the property that no edge in G \ M can be added to M while maintaining the matching property (no two edges share an endpoint).
@@ -251,13 +228,13 @@ A maximum matching M in graph G has the property that no edge in G \ M can be ad
 - Maximum matching is maximal (but not all maximal matchings are maximum)
 
 **Test Strategy:**
-- Generate random graphs (both bipartite and general)
+- Generating random graphs (both bipartite and general)
 - Graph sizes: 4-30 nodes
-- Compute maximum matching M using NetworkX
+- Computing maximum matching M using NetworkX
 - For every edge e = (u,v) not in M:
-  - Check if u is matched in M (exists edge in M incident to u)
-  - Check if v is matched in M (exists edge in M incident to v)
-  - Verify: u is matched OR v is matched (or both)
+  - Checking if u is matched in M (exists edge in M incident to u)
+  - Checking if v is matched in M (exists edge in M incident to v)
+  - Verifying if: u is matched OR v is matched (or both)
 - If verification fails, matching is not maximal
 
 **Graph Generation Strategy:**
