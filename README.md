@@ -1,5 +1,5 @@
 
-# Property-Based Testing for NetworkX - Project Plan
+# Property-Based Testing for NetworkX 
 
 **Team Size:** 1  
 **Course:** E0 251o  
